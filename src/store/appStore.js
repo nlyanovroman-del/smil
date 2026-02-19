@@ -17,7 +17,7 @@ const useAppStore = create(
       // Stage 3: Selected traits and chat
       selectedTraits: [],
       conversations: {},
-      apiKey: '',
+      apiKey: import.meta.env.VITE_ANTHROPIC_API_KEY || '',
 
       // Actions — Stage 1
       setAnswer: (questionId, value) =>
