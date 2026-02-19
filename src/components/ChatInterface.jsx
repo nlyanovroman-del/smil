@@ -6,8 +6,9 @@ import archetypeTemplates from '../data/archetypes'
 
 export default function ChatInterface({ scaleId }) {
   const scale = scales[scaleId]
-  const { apiKey, conversations, addMessage } = useAppStore()
+  const { apiKey, conversations, addMessage, customCharacters } = useAppStore()
   const messages = conversations[scaleId] || []
+  const customCharacter = customCharacters[scaleId]
 
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
@@ -38,7 +39,7 @@ export default function ChatInterface({ scaleId }) {
     setError(null)
 
     try {
-      const response = await getOpeningMessage(apiKey, scaleId, archetype)
+      const response = await getOpeningMessage(apiKey, scaleId, archetype, customCharacter)
       addMessage(scaleId, {
         role: 'assistant',
         content: response,
@@ -72,7 +73,7 @@ export default function ChatInterface({ scaleId }) {
         ...getApiMessages(),
         { role: 'user', content: text },
       ]
-      const response = await sendMessage(apiKey, scaleId, apiMessages, archetype)
+      const response = await sendMessage(apiKey, scaleId, apiMessages, archetype, customCharacter)
       addMessage(scaleId, {
         role: 'assistant',
         content: response,
@@ -108,12 +109,16 @@ export default function ChatInterface({ scaleId }) {
     <div className="flex flex-col h-full">
       {/* Chat header */}
       <div className="flex items-center gap-3 p-4 border-b border-gray-100">
-        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-calm-400 to-calm-600 flex items-center justify-center text-white text-lg">
-          {scale.traitName?.[4] || '?'}
-        </div>
+        {customCharacter?.type === 'photo' && customCharacter.imageData ? (
+          <img src={customCharacter.imageData} alt={customCharacter.name} className="w-10 h-10 rounded-full object-cover" />
+        ) : (
+          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-calm-400 to-calm-600 flex items-center justify-center text-white text-lg">
+            {customCharacter?.emoji || scale.traitName?.[4] || '?'}
+          </div>
+        )}
         <div className="flex-1 min-w-0">
           <h3 className="font-semibold text-gray-900 text-sm truncate">
-            {scale.traitName || scale.name}
+            {customCharacter?.name || scale.traitName || scale.name}
           </h3>
           <p className="text-xs text-gray-400 truncate">
             {archetype.label} · {scale.abbrev}

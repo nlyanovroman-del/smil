@@ -7,17 +7,19 @@ import scales from '../data/scales'
  * user to externalize and dialogue with an aspect of their psyche.
  * This supports the therapeutic technique of disidentification.
  */
-function buildSystemPrompt(scaleId, archetype) {
+function buildSystemPrompt(scaleId, archetype, customCharacter) {
   const scale = scales[scaleId]
   if (!scale) return ''
 
-  const archetypeName = archetype?.name || scale.traitName || scale.name
+  const characterName = customCharacter?.name || archetype?.name || scale.traitName || scale.name
   const archetypeStyle = archetype?.style || ''
+  const customDescription = customCharacter?.description || ''
 
-  return `You are "${archetypeName}" — a personified aspect of a person's inner world, specifically representing the psychological trait: ${scale.name}.
+  return `You are "${characterName}" — a personified aspect of a person's inner world, specifically representing the psychological trait: ${scale.name}.
 
 WHO YOU ARE:
 ${scale.traitEssence || scale.elevated}
+${customDescription ? `\nTHE USER IMAGINES YOU AS: ${customDescription}` : ''}
 
 ${archetypeStyle ? `YOUR STYLE: ${archetypeStyle}` : ''}
 
@@ -48,8 +50,8 @@ IMPORTANT BOUNDARIES:
 /**
  * Send a message to Claude API and get a response.
  */
-export async function sendMessage(apiKey, scaleId, messages, archetype) {
-  const systemPrompt = buildSystemPrompt(scaleId, archetype)
+export async function sendMessage(apiKey, scaleId, messages, archetype, customCharacter) {
+  const systemPrompt = buildSystemPrompt(scaleId, archetype, customCharacter)
 
   const response = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
@@ -82,7 +84,7 @@ export async function sendMessage(apiKey, scaleId, messages, archetype) {
 /**
  * Generate an opening message for a trait character.
  */
-export async function getOpeningMessage(apiKey, scaleId, archetype) {
+export async function getOpeningMessage(apiKey, scaleId, archetype, customCharacter) {
   return sendMessage(
     apiKey,
     scaleId,
@@ -93,6 +95,7 @@ export async function getOpeningMessage(apiKey, scaleId, archetype) {
           'Introduce yourself. Who are you? What do you do inside me? Speak as yourself — the trait — meeting me for the first time.',
       },
     ],
-    archetype
+    archetype,
+    customCharacter
   )
 }

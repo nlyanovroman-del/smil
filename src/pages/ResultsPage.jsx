@@ -5,6 +5,7 @@ import { scoreAssessment, getElevatedScales, getPersonifiableElevated } from '..
 import { scaleCategories, T_SCORE_ELEVATED } from '../data/scales'
 import ScaleChart from '../components/ScaleChart'
 import TraitCard from '../components/TraitCard'
+import CharacterCreator from '../components/CharacterCreator'
 
 const VIEWS = {
   SCORES: 'scores',
@@ -13,8 +14,9 @@ const VIEWS = {
 
 export default function ResultsPage() {
   const navigate = useNavigate()
-  const { answers, scores, setScores, selectedTraits, toggleTrait } = useAppStore()
+  const { answers, scores, setScores, selectedTraits, toggleTrait, customCharacters } = useAppStore()
   const [view, setView] = useState(VIEWS.SCORES)
+  const [creatingCharacterFor, setCreatingCharacterFor] = useState(null)
 
   // Compute scores if not already done
   useEffect(() => {
@@ -217,9 +219,11 @@ export default function ResultsPage() {
                   <TraitCard
                     key={scale.id}
                     scale={scale}
+                    customCharacter={customCharacters[scale.id]}
                     isSelected={selectedTraits.includes(scale.id)}
                     onToggle={toggleTrait}
                     onInteract={handleInteract}
+                    onCustomize={() => setCreatingCharacterFor(scale.id)}
                   />
                 ))}
               </div>
@@ -258,6 +262,15 @@ export default function ResultsPage() {
             </button>
           </div>
         </>
+      )}
+
+      {/* Character Creator Modal */}
+      {creatingCharacterFor && (
+        <CharacterCreator
+          scaleId={creatingCharacterFor}
+          onComplete={() => setCreatingCharacterFor(null)}
+          onCancel={() => setCreatingCharacterFor(null)}
+        />
       )}
     </div>
   )

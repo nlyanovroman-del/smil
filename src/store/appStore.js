@@ -11,6 +11,9 @@ const useAppStore = create(
       // Stage 2: Computed scores
       scores: null,
 
+      // Stage 2.5: Custom character representations for traits
+      customCharacters: {},
+
       // Stage 3: Selected traits and chat
       selectedTraits: [],
       conversations: {},
@@ -28,6 +31,12 @@ const useAppStore = create(
       // Actions — Stage 2
       setScores: (scores) =>
         set({ scores }),
+
+      // Actions — Stage 2.5: Custom characters
+      setCustomCharacter: (scaleId, character) =>
+        set((state) => ({
+          customCharacters: { ...state.customCharacters, [scaleId]: character },
+        })),
 
       // Actions — Stage 3
       setSelectedTraits: (traits) =>
@@ -67,6 +76,7 @@ const useAppStore = create(
           answers: {},
           currentQuestion: 0,
           scores: null,
+          customCharacters: {},
           selectedTraits: [],
           conversations: {},
         }),
@@ -77,6 +87,7 @@ const useAppStore = create(
         answers: state.answers,
         currentQuestion: state.currentQuestion,
         scores: state.scores,
+        customCharacters: state.customCharacters,
         selectedTraits: state.selectedTraits,
         conversations: state.conversations,
         apiKey: state.apiKey,

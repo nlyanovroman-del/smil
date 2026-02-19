@@ -138,9 +138,10 @@ const defaultVisual = {
   illustration: 'An inner part waiting to be understood.',
 }
 
-export default function TraitCard({ scale, isSelected, onToggle, onInteract }) {
+export default function TraitCard({ scale, customCharacter, isSelected, onToggle, onInteract, onCustomize }) {
   const [flipped, setFlipped] = useState(false)
   const visual = traitVisuals[scale.id] || defaultVisual
+  const hasCustom = !!customCharacter
 
   const tScoreLabel =
     scale.tScore >= 85 ? 'Very High' :
@@ -165,9 +166,13 @@ export default function TraitCard({ scale, isSelected, onToggle, onInteract }) {
       {!flipped ? (
         /* FRONT — Visual card face */
         <div className={`${visual.bg} p-6`}>
-          {/* Trait emoji and T-score badge */}
+          {/* Trait emoji / custom image and T-score badge */}
           <div className="flex items-start justify-between mb-4">
-            <span className="text-4xl">{visual.emoji}</span>
+            {hasCustom && customCharacter.type === 'photo' && customCharacter.imageData ? (
+              <img src={customCharacter.imageData} alt={customCharacter.name} className="w-12 h-12 rounded-xl object-cover" />
+            ) : (
+              <span className="text-4xl">{hasCustom ? (customCharacter.emoji || visual.emoji) : visual.emoji}</span>
+            )}
             <span className={`
               px-2 py-0.5 rounded-full text-xs font-bold
               ${scale.tScore >= 85 ? 'bg-red-100 text-red-700' :
@@ -178,15 +183,15 @@ export default function TraitCard({ scale, isSelected, onToggle, onInteract }) {
             </span>
           </div>
 
-          {/* Trait name */}
+          {/* Trait name (custom or default) */}
           <h3 className={`text-lg font-bold ${visual.accent} mb-1`}>
-            {scale.traitName || scale.name}
+            {hasCustom ? customCharacter.name : (scale.traitName || scale.name)}
           </h3>
           <p className="text-xs text-gray-400 mb-3">{scale.abbrev} — {scale.name}</p>
 
           {/* Illustration description */}
           <p className="text-sm text-gray-500 italic leading-relaxed mb-4">
-            "{visual.illustration}"
+            "{hasCustom ? customCharacter.description : visual.illustration}"
           </p>
 
           {/* Flip hint */}
@@ -236,7 +241,18 @@ export default function TraitCard({ scale, isSelected, onToggle, onInteract }) {
             </button>
           </div>
 
-          <p className="text-xs text-gray-300 text-center mt-3">tap to flip back</p>
+          {/* Customize character button */}
+          <button
+            onClick={(e) => {
+              e.stopPropagation()
+              onCustomize && onCustomize()
+            }}
+            className="w-full mt-2 py-1.5 rounded-lg text-xs font-medium text-purple-500 hover:bg-purple-50 transition-colors"
+          >
+            {hasCustom ? '✏ Change character' : '✨ Customize character'}
+          </button>
+
+          <p className="text-xs text-gray-300 text-center mt-2">tap to flip back</p>
         </div>
       )}
 
