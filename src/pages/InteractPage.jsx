@@ -119,7 +119,7 @@ export default function InteractPage() {
           <div className="flex-1 flex items-center justify-center p-6">
             <div className="card max-w-md w-full">
               <h2 className="text-lg font-semibold text-gray-900 mb-2">
-                Connect to Claude
+                Connect to OpenAI
               </h2>
               <p className="text-sm text-gray-500 mb-4">
                 Stage 3 uses the Anthropic API to bring your inner parts to life.
