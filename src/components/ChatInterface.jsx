@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import useAppStore from '../store/appStore'
-import { sendMessage, getOpeningMessage } from '../utils/claude'
+import { sendMessage, getOpeningMessage } from '../utils/openai'
 import scales from '../data/scales'
 import archetypeTemplates from '../data/archetypes'
 
